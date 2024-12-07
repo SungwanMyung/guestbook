@@ -108,7 +108,7 @@ $ curl 172.17.0.6
 
 ## Registry
 ```bash
-$ docker tag quay.io/uvelyster/ubuntu:24.04 plutomsw/ubuntu_24.04      # Select Image
+$ docker tag quay.io/uvelyster/ubuntu:24.04 ID/ubuntu_24.04            # Select Image
 $ docker login -u ID                                                   # Login in hub.docker.com
-$ docker push plutomsw/ubuntu_24.04                                    # Push Image
+$ docker push ID/ubuntu_24.04                                          # Push Image(docker.io/ID/ubuntu_24.04)
 ```
