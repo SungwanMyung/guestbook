@@ -11,7 +11,9 @@
 1. Virtual Box
 2. Rocky 9.5(rockylinux.org vs. mirror.navercorp.com) at Virtual Box
 3. mobaxterm
-4. Docker Repositoy 설정 및 설치 그리고 Run Container(ngnix) as root at Rocky
+
+
+## Docker Repositoy 설정 및 설치 그리고 Run Container(ngnix) as root at Rocky
 ```bash
 $ curl -o /etc/yum.repos.d/docker-ce.repo https://download.docker.com/linux/centos/docker-ce.repo
 $ dnf install -y docker-ce
@@ -23,7 +25,9 @@ $ docker images
 $ docker inspect [IDs]
 $ curl 172.17.0.2    # Default Docker Network: 172.17.0.1/16
 ```
-5. Create Image by Auto(=Dockerfile)
+
+
+## Create Docker Image by Auto(=Dockerfile)
 ```bash
 $ mkdir build
 $ cd build
