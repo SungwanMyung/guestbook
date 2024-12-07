@@ -104,3 +104,11 @@ $ echo helloworld > index.html
 $ curl 172.17.0.6
 # 기타: USER(계정), ARG(빌드 시 파라미터) vs. ENV(실행 시 파라미터), ONBUILD(=트리거)
 ```
+
+
+## Registry
+```bash
+$ docker tag quay.io/uvelyster/ubuntu:24.04 plutomsw/ubuntu_24.04      # Select Image
+$ docker login -u ID                                                   # Login in hub.docker.com
+$ docker push plutomsw/ubuntu_24.04                                    # Push Image
+```
