@@ -27,14 +27,32 @@ $ curl 172.17.0.2    # Default Docker Network: 172.17.0.1/16
 ```
 
 
-## Create Docker Image by Auto(=Dockerfile)
+## Manage Docker Image by Auto(=Dockerfile) and Container
 ```bash
 $ mkdir build
 $ cd build
 $ vi Dockerfile
-FROM  quay.io/uvelyster/busybox
+FROM quay.io/uvelyster/busybox
 CMD echo helloworld
 $ docker build .
 $ docker images
-$ docker run [IDs]
+$ docker run [IDs]                 # print helloworld
+$ docker run [IDs] echo itworks    # print itworks
+$ docker tag [IDs] hellotest
+$ docker tag hellotest test
+$ docker images
+$ docker rmi hellotest             # remove tag or image
+$ docker rmi test                  # remove tag or image but ERROR because Container is running
+$ docer ps -a
+$ docker rm [Name or IDs]          # remove a container
+$ docker rm -f $(docker ps -aq)    # remove all container
+$ docker rmi test                  # remove tag or image
+$ vi Dockerfile
+FROM quay.io/uvelyster/nginx
+RUN echo 'helloworld' > /usr/share/nginx/html/index.html
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]      # 컨테이너 실행 시 동작할 명령어: CMD vs. ENTRYPOINT + CMD
+$ docker build -t test .
+$ docker run -d test
+$ curl 172.17.0.2
 ```
