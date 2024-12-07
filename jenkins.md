@@ -119,6 +119,28 @@ $ docker run -d ID/ubuntu_24.04                                        # Downloa
 ```
 
 
-## harbor
+## Install harbor
 ```bash
+$ mkdir /data
+# 인증서 생성
+$ openssl \
+req -newkey rsa:4096 -nodes -sha256 -x509 \
+-days 365 -keyout /data/myregistry.com.key -out /data/myregistry.com.crt \
+-subj '/CN=myregistry.com' \
+-addext "subjectAltName = DNS:myregistry.com"
+$ mkdir -p /etc/docker/certs.d/myregistry.com
+$ cp /data/myregistry.com.crt /etc/docker/certs.d/myregistry.com/ca.crt
+$ dnf install -y wget
+$ wget https://github.com/goharbor/harbor/releases/download/v2.10.0/harbor-offline-installer-v2.10.0.tgz
+$ tar xvzf harbor-offline-installer-v2.10.0.tgz
+$ cd harbor
+$ cp harbor.yml.tmpl harbor.yml
+$ vi harbor.yml
+# hostname
+# certificate
+# private_key
+# harbor_admin_password
+$ vi /etc/hosts
+172.16.0.200  myregistry.com
+$ ./install.sh
 ```
