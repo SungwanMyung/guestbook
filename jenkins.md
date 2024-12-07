@@ -106,9 +106,19 @@ $ curl 172.17.0.6
 ```
 
 
-## Registry
+## Registry(docker.io for Public or Private vs. quay.io, harbor for Public and Private)
 ```bash
-$ docker tag quay.io/uvelyster/ubuntu:24.04 ID/ubuntu_24.04            # Select Image
+$ docker search ubuntu                                                 # Search ubuntu at docker.io/library(=offical)
+$ docker pull ubuntu                                                   # Pull ubuntu at docker.io/library(=offical)
+
+$ docker tag quay.io/uvelyster/ubuntu:24.04 ID/ubuntu_24.04            # Select User Image
 $ docker login -u ID                                                   # Login in hub.docker.com
-$ docker push ID/ubuntu_24.04                                          # Push Image(docker.io/ID/ubuntu_24.04)
+$ docker push ID/ubuntu_24.04                                          # Push User Image(docker.io/ID/ubuntu_24.04)
+$ docker rmi ID/ubuntu_24.04
+$ docker run -d ID/ubuntu_24.04                                        # Download User Image and run container
+```
+
+
+## harbor
+```bash
 ```
