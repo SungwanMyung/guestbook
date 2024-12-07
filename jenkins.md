@@ -18,7 +18,7 @@
 $ curl -o /etc/yum.repos.d/docker-ce.repo https://download.docker.com/linux/centos/docker-ce.repo
 $ dnf install -y docker-ce
 $ systemctl start docker                       # Run Docker
-$ systemctl enable docker                      # Auto Run
+$ systemctl enable docker                      # For Auto Run
 $ docker run -d quay.io/uvelyster/nginx        # Download and run container(nginx at quay.io)
 $ docker ps
 $ docker images
@@ -53,17 +53,17 @@ $ docker rmi test                          # remove tag or image
 ## Instruction
 ```bash
 $ vi Dockerfile
-FROM quay.io/uvelyster/nginx
+FROM quay.io/uvelyster/nginx                                # FROM
 RUN echo 'helloworld' > /usr/share/nginx/html/index.html    # 컨테이너 설치(RUN) 시 동작할 명령어
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]                          # 컨테이너 실행(CMD) 시 동작할 명령어: CMD vs. ENTRYPOINT + CMD
+ENTRYPOINT ["/docker-entrypoint.sh"]                        # ENTRYPOINT
+CMD ["nginx", "-g", "daemon off;"]                          # 컨테이너 실행(CMD) 시 동작할 명령어: ENTRYPOINT + CMD
 $ docker build -t test_nginx .                              # Tag name is test_nginx
 $ docker run -d test_nginx
 $ curl 172.17.0.2
 $ vi Dockerfile
-FROM quay.io/uvelyster/ubuntu:24.04                         # 컨테이너 설치(RUN) 시 동작할 명령어                         
-RUN apt-get update; apt-get install -y apache2              # 컨테이너 실행(CMD) 시 동작할 명령어: CMD vs. ENTRYPOINT + CMD
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+FROM quay.io/uvelyster/ubuntu:24.04                         
+RUN apt-get update; apt-get install -y apache2              # 컨테이너 설치(RUN) 시 동작할 명령어
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]            # 컨테이너 실행(CMD) 시 동작할 명령어: CMD
 $ docker build -t test_apache .
 $ docker run -d test_apache
 $ curl 172.17.0.3
@@ -76,16 +76,31 @@ CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 $ docker build -t test_apache:v2 .                          # 버전 정보
 $ docker run -d test_apache:v2
 $ curl 172.17.0.4
-# docker exec [IDs] env                                     # Container ENV 확인
+# docker exec [Name or IDs] env                             # Container ENV(실행 시 파라미터) 확인 vs. ARG(빌드 시 파라미터)
 $ vi Dockerfile
 FROM quay.io/uvelyster/ubuntu:24.04
 RUN apt-get update; apt-get install -y apache2
 COPY index.html /var/www/html/index.html
 EXPOSE 80                                                   # EXPOSE(HTTP: 80)
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
-$ docker build -t test_apache:v3 .                          # 버전 정보
+$ docker build -t test_apache:v3 .
 $ docker run -d test_apache:v3
 $ curl 172.17.0.5
 $ docker run -d -P test_apache:v3                            # 임의 포트 포워딩(localhost:* > container: EXPOSE)
 $ docker run -d -P 1234:80 test_apache:v3                    # 지정 포트 포워딩(localhost:1234 > container: 80)
+$ vi Dockerfile
+FROM quay.io/uvelyster/ubuntu:24.04
+RUN apt-get update; apt-get install -y apache2
+EXPOSE 80
+VOLUME /var/www/html                                         # VOLUME for Container
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+$ docker build -t test_apache:v4 .
+$ docker run -d test_apache:v4
+$ docker volume ls
+$ cd /var/lib/docker/volumes/%VOLUME_ID%/_data/
+$ docker inspect [Name or IDs]
+$ curl 172.17.0.6
+$ echo helloworld > index.html
+$ curl 172.17.0.6
+# 기타: USER(계정), ARG(빌드 시 파라미터) vs. ENV(실행 시 파라미터), ONBUILD(=트리거)
 ```
