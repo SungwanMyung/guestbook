@@ -23,7 +23,7 @@ $ docker run -d quay.io/uvelyster/nginx        # Download and run container(ngin
 $ docker ps
 $ docker images
 $ docker inspect [IDs]
-$ curl 172.17.0.2    # Default Docker Network: 172.17.0.1/16
+$ curl 172.17.0.2                              # Default Docker Network: 172.17.0.1/16
 ```
 
 
@@ -36,23 +36,56 @@ FROM quay.io/uvelyster/busybox
 CMD echo helloworld
 $ docker build .
 $ docker images
-$ docker run [IDs]                 # print helloworld
-$ docker run [IDs] echo itworks    # print itworks
-$ docker tag [IDs] hellotest
-$ docker tag hellotest test
+$ docker run [Name or IDs]                 # print helloworld
+$ docker run [Name or IDs] echo itworks    # print itworks
+$ docker tag [Name or IDs] test_hello
+$ docker tag test_hello test
 $ docker images
-$ docker rmi hellotest             # remove tag or image
-$ docker rmi test                  # remove tag or image but ERROR because Container is running
+$ docker rmi test_hello                    # remove tag or image
+$ docker rmi test                          # remove tag or image but ERROR because Container is running
 $ docer ps -a
-$ docker rm [Name or IDs]          # remove a container
-$ docker rm -f $(docker ps -aq)    # remove all container
-$ docker rmi test                  # remove tag or image
+$ docker rm [Name or IDs]                  # remove a container
+$ docker rm -f $(docker ps -aq)            # remove all container
+$ docker rmi test                          # remove tag or image
+```
+
+
+## Instruction
+```bash
 $ vi Dockerfile
 FROM quay.io/uvelyster/nginx
-RUN echo 'helloworld' > /usr/share/nginx/html/index.html
+RUN echo 'helloworld' > /usr/share/nginx/html/index.html    # 컨테이너 설치(RUN) 시 동작할 명령어
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]      # 컨테이너 실행 시 동작할 명령어: CMD vs. ENTRYPOINT + CMD
-$ docker build -t test .
-$ docker run -d test
+CMD ["nginx", "-g", "daemon off;"]                          # 컨테이너 실행(CMD) 시 동작할 명령어: CMD vs. ENTRYPOINT + CMD
+$ docker build -t test_nginx .                              # Tag name is test_nginx
+$ docker run -d test_nginx
 $ curl 172.17.0.2
+$ vi Dockerfile
+FROM quay.io/uvelyster/ubuntu:24.04                         # 컨테이너 설치(RUN) 시 동작할 명령어                         
+RUN apt-get update; apt-get install -y apache2              # 컨테이너 실행(CMD) 시 동작할 명령어: CMD vs. ENTRYPOINT + CMD
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+$ docker build -t test_apache .
+$ docker run -d test_apache
+$ curl 172.17.0.3
+$ vi index.html
+$ vi Dockerfile
+FROM quay.io/uvelyster/ubuntu:24.04
+RUN apt-get update; apt-get install -y apache2
+COPY index.html /var/www/html/index.html                    # COPY(로컬의 파일 복사) vs. ADD(네트워크/압축 파일 등 추가)
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+$ docker build -t test_apache:v2 .                          # 버전 정보
+$ docker run -d test_apache:v2
+$ curl 172.17.0.4
+# docker exec [IDs] env                                     # Container ENV 확인
+$ vi Dockerfile
+FROM quay.io/uvelyster/ubuntu:24.04
+RUN apt-get update; apt-get install -y apache2
+COPY index.html /var/www/html/index.html
+EXPOSE 80                                                   # EXPOSE(HTTP: 80)
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+$ docker build -t test_apache:v3 .                          # 버전 정보
+$ docker run -d test_apache:v3
+$ curl 172.17.0.5
+$ docker run -d -P test_apache:v3                            # 임의 포트 포워딩(localhost:* > container: EXPOSE)
+$ docker run -d -P 1234:80 test_apache:v3                    # 지정 포트 포워딩(localhost:1234 > container: 80)
 ```
