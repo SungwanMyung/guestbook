@@ -119,7 +119,7 @@ $ docker run -d ID/ubuntu_24.04                                        # Downloa
 ```
 
 
-## Install harbor
+## Install Harbor and Manage Image
 ```bash
 $ mkdir /data
 # 인증서 생성
@@ -136,11 +136,37 @@ $ tar xvzf harbor-offline-installer-v2.10.0.tgz
 $ cd harbor
 $ cp harbor.yml.tmpl harbor.yml
 $ vi harbor.yml
-# hostname
-# certificate
-# private_key
-# harbor_admin_password
+hostname: muregistry.com
+certificate: /data/muregistry.com.crt
+private_key: /data/muregistry.com.key
+harbor_admin_password: Harbor12345
 $ vi /etc/hosts
 172.16.0.200  myregistry.com
 $ ./install.sh
+# https://172.16.0.200 접속
+$ docker compose down                                                  # harbor 삭제 by docker-compose.yml
+$ ./install                                                            # =docker compose up
+$ docker tag quay.io/uvelyster/nginx myregistry.com/library/nginx      # Create Image, Login and Push
+$ docker login myregistry.com
+$ docker push myregistry.com/library/nginx
+```
+
+## Install Jenkins and ...
+```bash
+$ docker run -d --name jenkins \
+--restart always \
+--dns 172.16.0.200 \
+-p 8080:8080 \
+-p 50000:50000 \
+-v jenkins_home:/var/jenkins_home \
+-v /var/run/docker.sock:/var/run/docker.sock \
+quay.io/uvelyster/jenkins
+$ docker logs jenkins                # Find Password
+$ dnf install -y dnsmasq 
+$ systemctl start dnsmasq
+$ systemctl enable dnsmasq
+# http://172.16.0.200:8080/
+$ vi /etc/dnsmasq.conf               # 필요 시 DNS 설정
+# interface=lo
+$ systemctl restart dnsmasq
 ```
