@@ -196,7 +196,7 @@ pipeline {
     agent any
     stages {
         stage('hello') {
-            steps{
+            steps {
                 echo 'helloworld'
             }
         }
@@ -225,6 +225,24 @@ $ systemctl restart docker
 $ docker pull maven
 ```
 6. ...
+7. Input Name and Select Item Type(=Pipeline)
+8. Input Description and Script
+```bash
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    stages {
+        stage('hello') {
+            steps {
+                echo 'helloworld'
+            }
+        }
+    }
+}
+```
 
 ### Jenkins Sciprt for Build Farm(maven, gradle, python agent) at Jenkins vs. Jenkinsfile at Source(include Web Hook)
 
