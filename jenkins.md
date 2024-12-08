@@ -7,10 +7,10 @@
 3. Kurbernates is upload at development or staging or product
 
 
-## Enviroment
+## Enviroments
 1. Virtual Box
 2. Rocky 9.5(rockylinux.org vs. mirror.navercorp.com) at Virtual Box
-3. mobaxterm
+3. mobaxterm + https://codeshare.io/
 
 
 ## Docker Repositoy 설정 및 설치 그리고 Run Container(ngnix) as root at Rocky
@@ -194,7 +194,7 @@ $ systemctl restart dnsmasq
 ```bash
 pipeline {
     agent any
-    stages{
+    stages {
         stage('hello') {
             steps{
                 echo 'helloworld'
@@ -220,6 +220,13 @@ $ systemctl daemon-reload
 $ systemctl restart docker
 ```
 4. Configuratin Docker Cloud details(Docker Host URI=tcp://172.16.0.200:2379 등) and Docker Agent templates(Maven 정보)
+5. Pull maven
+```bash
+$ docker pull maven
+```
+6. ...
+
+### Jenkins Sciprt for Build Farm(maven, gradle, python agent) at Jenkins vs. Jenkinsfile at Source(include Web Hook)
 
 
 ## GitLab Installation
@@ -253,4 +260,19 @@ services:
 $ docker compose up -d
 $ vi /etc/hosts
 $ 172.16.0.200	myregistry.com mygitlab.com
+```
+
+### Git Client Usage
+```bash
+$ git config -l
+
+$ git config --global user.name "root"
+$ git config --global user.email "root@mygitlab.com"
+
+$ git init --initial-branch=main
+$ git remote add origin http://mygitlab.com/root/test.git
+
+$ git add .
+$ git commit -m 'message'
+$ git push -u origin main
 ```
